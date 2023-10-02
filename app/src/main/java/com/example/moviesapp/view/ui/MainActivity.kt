@@ -7,7 +7,6 @@ import com.example.moviesapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)

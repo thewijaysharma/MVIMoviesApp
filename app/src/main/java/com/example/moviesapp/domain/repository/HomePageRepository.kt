@@ -9,7 +9,6 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class HomePageRepository @Inject constructor(private val apiService: ApiService, val appContext : Context) {
-
     suspend fun searchMovie(query : String) : Response<SearchResponse>{
         return apiService.searchMovie(query, Constants.API_KEY)
     }
