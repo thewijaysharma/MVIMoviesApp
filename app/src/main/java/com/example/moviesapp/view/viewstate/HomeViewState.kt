@@ -4,7 +4,7 @@ import com.example.moviesapp.domain.response.MovieData
 
 sealed class HomeViewState {
     object Idle : HomeViewState()
-    class Loading(message : String) : HomeViewState()
-    class Error(errorMessage : String) : HomeViewState()
-    class Success(movies : List<MovieData>) : HomeViewState()
+    class Loading(val message : String) : HomeViewState()
+    class Error(val errorMessage : String) : HomeViewState()
+    class Success(val movies : List<MovieData>) : HomeViewState()
 }
