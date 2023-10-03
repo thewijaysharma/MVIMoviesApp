@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomepageViewModel @Inject constructor(private val repository: HomePageRepository) : ViewModel(){
 
-    private val _viewState = MutableStateFlow<HomeViewState>(HomeViewState.Idle)
+    private val _viewState = MutableStateFlow<HomeViewState>(HomeViewState.Loading("Loading.. Please wait")) // todo power from strings.xml
 
     val viewState : StateFlow<HomeViewState> = _viewState
     val homeIntent : Channel<HomeIntent> = Channel(Channel.UNLIMITED)
@@ -29,31 +29,27 @@ class HomepageViewModel @Inject constructor(private val repository: HomePageRepo
         viewModelScope.launch {
             homeIntent.consumeAsFlow().collect{
                 when(it){
-                    is HomeIntent.LoadAllMovies -> repository.searchMovie("")
-                    is HomeIntent.SearchMovie -> repository.searchMovie(it.query)
+                    is HomeIntent.LoadAllMovies -> searchMovie("")
+                    is HomeIntent.SearchMovie -> searchMovie(it.query)
                 }
             }
         }
     }
 
-    fun searchMovies(query: String){
+    private fun searchMovie(query: String){
         viewModelScope.launch {
             _viewState.value = HomeViewState.Loading("Loading.. Please wait") // todo power this from strings.xml
-
             val response = repository.searchMovie(query)
-
-
-            response.body().let{
-
-            }
-
             if(response.isSuccessful && response.body() != null){
-                val searchResponse = response.body()
-//                _viewState.value = HomeViewState.Success(searchResponse.results)
+                val responseBody = response.body()!!
+                if(responseBody.results.isNotEmpty()){
+                    _viewState.value = HomeViewState.Success(responseBody.results)
+                }else{
+                    _viewState.value = HomeViewState.NoResults("No results found") // todo power this from strings.xml
+                }
             }else{
-
+                _viewState.value = HomeViewState.Error(response.message())
             }
-
         }
     }
 
